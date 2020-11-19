@@ -1,19 +1,25 @@
 window.onload = function(){
 
   var input = document.querySelector("#country");
-  var button = document.querySelector("#lookup");
+  var countryBut = document.querySelector("#lookup");
+  var citiesBut = document.querySelector("#cities")
   var result = document.querySelector("#result");
 
-  button.addEventListener("click", function(e){
+  countryBut.addEventListener("click", function(e){
     e.preventDefault();
 
     result.innerHTML = "";
-    const formData = new FormData();
-    formData.append("country",input.value);
-    fetchData(input.value);
+    fetchCountry(input.value);
   });
 
-  async function fetchData(val){
+  citiesBut.addEventListener("click", function(e){
+    e.preventDefault();
+    result.innerHTML = "";
+
+    fetchCity(input.value);
+  });
+
+  async function fetchCountry(val){
     if(val==""){
       const response = await fetch("world.php?");
       if(response.ok){
@@ -37,4 +43,29 @@ window.onload = function(){
         }
       }
     }
+
+    async function fetchCity(val){
+      if(val==""){
+        const response = await fetch("world.php?");
+        if(response.ok){
+          countries = await response.text();
+          console.log("nothing");
+          console.log(countries);
+          result.innerHTML = countries;
+        } else {
+          const message = "An error has occured: ${response.status}";
+          throw new Error(message);
+        }
+      } else{
+          const response = await fetch("world.php?country="+val+"&context=cities");
+          if(response.ok){
+            countries = await response.text();
+            console.log(countries)
+            result.innerHTML = countries;
+          } else {
+            const message = "An error has occured: ${response.status}";
+            throw new Error(message);
+          }
+        }
+      }
 };
